@@ -7,9 +7,19 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="overflow-hidden  sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
+
+                    <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                        <div class="d-flex justify-content-center">
+                            <img src="{{ asset('storage/images/user-png-icon-16.jpg') }}" width="100" height="100" class="rounded">
+                        </div>
+                        <div class="d-flex">
+                            <p>Total User</p>
+                            <p>23</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

