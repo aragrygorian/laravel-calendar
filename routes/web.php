@@ -24,7 +24,7 @@ Route::get("/cmd/{cmd}", function ($cmd) {
 });
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
 Route::get('/dashboard', function () {
