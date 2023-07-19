@@ -14,10 +14,10 @@
                             <a href="{{ route('task.create') }}">
                               Add Task
                             </a>
-                        </button>
-                         
+                        </button>                         
                         </div>
                       </div>
+                      @include('partial.error')
                     <div class="card">
                         <h5 class="card-header">Task List</h5>
                         <div class="table-responsive">

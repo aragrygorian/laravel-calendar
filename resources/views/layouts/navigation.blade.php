@@ -12,21 +12,32 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    @role('admin')
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @endrole
+
+                    @role('admin')
                     <x-nav-link :href="route('user.index')" :active="request()->routeIs('user')">
                         {{ __('User') }}
                     </x-nav-link>
+                    @endrole
+                    @role('admin')
                     <x-nav-link :href="route('task.index')" :active="request()->routeIs('task')">
                         {{ __('Assign Task') }}
                     </x-nav-link>
+                    @endrole
+                    @role('user')
                     <x-nav-link :href="route('task.view_task')" :active="request()->routeIs('task.view_task')">
                         {{ __('View Task') }}
                     </x-nav-link>
+                    @endrole
+                    @role('admin')
                     <x-nav-link :href="route('logo')" :active="request()->routeIs('logo')">
                         {{ __('Change Logo') }}
                     </x-nav-link>
+                    @endrole
                 </div>
             </div>
 

@@ -38,8 +38,7 @@
                             <input type="password" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="inputCity" name="password">
                         </div>
                         <div class="col-md-6">
-                            <label for="inputCity" class="form-label">Image</label>
-                            <input type="file" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="inputCity" name="image">
+                            <input type="file" class="cursor-pointer bg-transparent border-2 border-transparent-500   font-bold py-2 px-4 rounded" id="inputCity" name="image">
                             @if($user->image)
                              <img src="{{ asset('storage/'.$user->image) }}" width="100" height="100" class="rouded">
                             @endif

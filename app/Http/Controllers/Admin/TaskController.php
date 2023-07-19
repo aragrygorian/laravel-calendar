@@ -94,6 +94,7 @@ class TaskController extends Controller
         $task->task_description = $request->description;
         $task->task_time = $request->time;
         $task->task_date = $request->date;
+        $task->end_date = $request->end_date;
         if($task->update()){
             return redirect()->route('task.index')->with('success' , 'Task Updated Successfully.');
         }else{

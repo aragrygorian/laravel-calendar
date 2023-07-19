@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Models;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,7 +25,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('admin.user.create');
+        $roles = Role::all();
+        return view('admin.user.create' , compact('roles'));
     }
 
     /**
@@ -50,6 +52,7 @@ class UserController extends Controller
         }
 
         if($user->save()){
+            $user->assignRole($request->role);
             return redirect()->route('user.index')->with('success' , 'User Created Successfully.');
         }else{
             return redirect()->route('user.index')->with('error' , 'Failed to create user.');
