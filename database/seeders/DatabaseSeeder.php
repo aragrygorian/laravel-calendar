@@ -20,12 +20,16 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        $role = Role::create(['name' => 'admin']);
-        $role = Role::create(['name' => 'user']);
+        // $role = Role::create(['name' => 'admin']);
+        // $role = Role::create(['name' => 'user']);
 
-        $admin = User::find(7);
+        
+        $admin = User::create([
+            'name' => 'admin',
+            'email' => 'admin@gmail.com',
+            'password' => '123456'
+        ]);
+
         $admin->assignRole('admin');
-        $user = User::find(11);
-        $user->assignRole('user');
     }
 }
