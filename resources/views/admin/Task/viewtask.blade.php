@@ -24,7 +24,6 @@
                     start : '{{ $task->task_date }}',
                     end : '{{$task->end_date}}',
                     displayEventTime : true,
-                    // url : '{{ route('task.edit', $task->id) }}',
                 },
                 @endforeach
             ]

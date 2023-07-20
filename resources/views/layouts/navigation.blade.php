@@ -25,7 +25,7 @@
                     </x-nav-link>
                     @endrole
                     @role('admin')
-                    <x-nav-link :href="route('task.index')" :active="request()->routeIs('task')">
+                    <x-nav-link :href="route('assign-task')" :active="request()->routeIs('assign-task')">
                         {{ __('Assign Task') }}
                     </x-nav-link>
                     @endrole
