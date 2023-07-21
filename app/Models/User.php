@@ -43,4 +43,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+     // Define the many-to-many relationship with the Task model
+     public function tasks()
+     {
+         return $this->belongsToMany(Task::class, 'user_tasks', 'user_id', 'task_id');
+     }
 }

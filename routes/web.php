@@ -37,11 +37,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('/user', UserController::class);
-    // Route::resource('/task' ,TaskController::class);
+    Route::resource('/task' ,TaskController::class);
     Route::get('view_task' , [TaskController::class , 'getTask'])->name('task.view_task');
     Route::get('/logo' , [SettingController::class , 'logo'])->name('logo');
     Route::post('/change-logo' , [SettingController::class , 'change_logo'])->name('change-logo');
-    Route::get('assign-task' ,[TaskController::class , 'index'])->name('assign-task');
+    Route::get('assign-task' ,[TaskController::class , 'calendar'])->name('assign-task');
     Route::post('fullcalenderAjax' ,[TaskController::class , 'ajax']);
 
     

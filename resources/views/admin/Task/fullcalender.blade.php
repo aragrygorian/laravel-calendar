@@ -4,24 +4,41 @@
             {{ __('Assign Task') }}
         </h2>
     </x-slot>
- 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.js"></script>
-    
-    <div class="container">
+    <style>
+       span.select2-container{
+            width: 100%!important;
+        }
+    </style>
+    <div class="container mt-5" >
+        <nav x-data="{ open: false }" class="border-b border-gray-100 mb-3">
+            <!-- Primary Navigation Menu -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-end h-16">
+                    <div class="flex">
+                        <!-- Navigation Links -->
+                        <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            @role('admin')
+                            <x-nav-link :href="route('assign-task')" :active="request()->routeIs('assign-task')">
+                                {{ __('Calendar View') }}
+                            </x-nav-link>
+                            @endrole
+                            @role('admin')
+                            <x-nav-link :href="route('task.index')" :active="request()->routeIs('task.index')">
+                                {{ __('Table View') }}
+                            </x-nav-link>
+                            @endrole
+                        </div>
+                    </div>
+        
+                
+                </div>
+            </div>
+        </nav>
         <div id='calendar'></div>
     </div>
 
-
-
+  
     <!-- The custom modal -->
     <div id="defaultModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden flex items-center justify-center w-full h-full p-4 overflow-x-hidden overflow-y-auto md:inset-0">
         <div class="relative w-full max-w-2xl">
@@ -43,14 +60,13 @@
                   <div class="p-6 space-y-6">
                     <div class="row">
                         <div class="col-md-12">
-                            <select id="userEvent" class="border p-2 mb-4 w-100">
-                                <option value="">select</option>
+                            <select id="userEvent" class="block w-full js-example-basic-single" multiple name="user_id[]">
                                 @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name ?? '' }}</option>
+                                    <option value="{{ $user->id }}">{{ $user->name ?? '' }}</option>
                                 @endforeach
                             </select>
                         </div>
-
+                        
                         <div class="col-md-12">
                             <label for="inputPassword4" class="form-label">Task Description</label>
                             <textarea class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_description" name="description" > </textarea>
@@ -68,6 +84,10 @@
                         <label for="inputCity" class="form-label">Task Time</label>
                         <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_time" name="time">
                     </div>
+                    <div class="col-md-12">
+                        <label for="inputCity" class="form-label">Task End Date</label>
+                        <input type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_date" name="end_date">
+                    </div>
                     </div>
                    
                     <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded" onclick="submitForm()" id="submitForm">Submit</button>
@@ -76,9 +96,20 @@
         </div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2({
+                placeholder: "Select",
+                allowClear: true
+            });
+            
+        });
+</script>
     <script type="text/javascript">
         $(document).ready(function() {
-
+            
+            
             /*------------------------------------------
             --------------------------------------------
             Get Site URL
@@ -103,22 +134,34 @@
             --------------------------------------------
             --------------------------------------------*/
             var calendar = $('#calendar').fullCalendar({
-                editable: true
-                , events: SITEURL + "/assign-task"
-                , displayEventTime: false
-                , editable: true
+                header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,basicWeek,basicDay,dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+                // right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+
+            },
+
+            navLinks: true,
+            editable: true,
+            events: "getevent",           
+            displayEventTime: false,
+                 events: SITEURL + "/assign-task"
                 , eventRender: function(event, element, view) {
+                    element.find('.fc-title').html(event.title);
                     if (event.allDay === 'true') {
                         event.allDay = true;
                     } else {
                         event.allDay = false;
                     }
                 }
+                
                 , selectable: true
                 , selectHelper: true
                 , select: function(start, end, allDay) {
                     openModal(start, end, allDay);
                 },
+            
                 eventDrop: function (event, delta) {
                         var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
                         var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
@@ -182,10 +225,17 @@
            
             // Function to handle form submission inside the modal
             $('#submitForm').click(function() {
-                const user_id = document.getElementById('userEvent').value;
+                const user_id = $('.js-example-basic-single').find(':selected');
+                // console.log(user_id[0]);
+                let users = [];
+                for(let i = 0; i < user_id.length; i++){
+                    users[i] = user_id[i].value;
+                }
+                
                 const description = document.getElementById('event_description').value;
                 const task_type = document.getElementById('task_type').value;
                 const task_time = document.getElementById('event_time').value;
+                const task_end_date = document.getElementById('event_end_date').value;
                 // console.log(user_id , description , task_type , task_time);
                 if (user_id) {
                     var start = $.fullCalendar.formatDate(selectedStart, "Y-MM-DD");
@@ -193,12 +243,12 @@
                     $.ajax({
                         url: SITEURL + "/fullcalenderAjax"
                         , data: {
-                             user_id: user_id
+                             users: users
                             , description: description
                             , task_type : task_type
                             , time : task_time
                             , start: start
-                            , end: end
+                            , end: task_end_date
                             , type: 'add'
                         }
                         , type: "POST"
@@ -223,19 +273,15 @@
                 }
             })
 
-            @foreach ($tasks  as $task )
-                calendar.fullCalendar('renderEvent', {
-                      id: '{{ $task->id }}'
-                    , title :'{{ $task->task_description}}'
-                    , start: '{{ $task->task_date }}'
-                    , end:'{{ $task->end_date}}'
-                    // , allDay: selectedAllDay
-                }, true);
-
-                // closeModal(); // Close the modal after form submission
-                // $('#closeModal').close();
-                calendar.fullCalendar('unselect');
-            @endforeach
+                    @foreach ($tasks as $task)
+                                    calendar.fullCalendar('renderEvent', {
+                                        id: '{{ $task->id }}',
+                                        title: 'Task : {{ $task->task_description }}<br> UserName : {{ $task->user->name ?? '' }}<br> Task Time : {{ $task->task_time }}', // Use <br> to create a line break
+                                        start: '{{ $task->task_date . ' ' . $task->task_time }}',
+                                        end: '{{ $task->end_date  . ' 11:59:59'}}',
+                                        // Other event properties...
+                                    }, true);
+                    @endforeach
 
         });
 
