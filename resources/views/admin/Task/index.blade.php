@@ -30,7 +30,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>User Name</th>
+                                        {{-- <th>User Name</th> --}}
                                         <th>Task Type</th>
                                         <th>Task Time</th>
                                         <th>Task Date</th>
@@ -38,11 +38,11 @@
                                     </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
-                                    
+                                    @foreach($tasks as $task)
                                      <tr>
                                          <td>{{ $loop->iteration }}</td>
                                          
-                                        <td>{{ $task->user_id == $task->user->id ? $task->user->name : '' }}</td>
+                                        {{-- <td>{{ $task->user_id == $task->user->id ? $task->user->name : '' }}</td> --}}
                                        
                                         <td>
                                             @if($task->task_type == 0)
