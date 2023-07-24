@@ -28,7 +28,10 @@ class TaskController extends Controller
         }
         $users = User::all();
         $tasks = Task::with('user')->get();
-        return view('admin.Task.fullcalender' , compact('users' , 'tasks'));
+        foreach($tasks as $task ){
+            $userNames = $task->users->pluck('name')->toArray();
+        }
+        return view('admin.Task.fullcalender' , compact('users' , 'tasks' , 'userNames'));
     }
  
     /**
@@ -46,9 +49,11 @@ class TaskController extends Controller
                   'task_description' => $request->description,
                   'task_type' => $request->task_type,
                   'task_time' => $request->time,
+                  'color' => $request->color,
                   'task_date' => $request->start,
                   'end_date' => $request->end,
               ]);
+
 
               $event->users()->sync($request->users);
  
