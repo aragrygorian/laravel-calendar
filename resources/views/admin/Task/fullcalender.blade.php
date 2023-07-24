@@ -78,6 +78,7 @@
                             <option value="">Select Task Type</option>
                             <option value="0">Daily</option>
                             <option value="1">Weekly</option>
+                            <option value="2">Monthly</option>
                         </select>
                     </div>
                     <div class="col-md-12">
@@ -87,6 +88,10 @@
                     <div class="col-md-12">
                         <label for="inputCity" class="form-label">Task End Date</label>
                         <input type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_date" name="end_date">
+                    </div>
+                    <div  class="col-md-12">
+                        <label for="color" class="form-label">Select Color</label>
+                        <input type="color" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_color" name="color">
                     </div>
                     </div>
                    
@@ -144,7 +149,7 @@
 
             navLinks: true,
             editable: true,
-            events: "getevent",           
+            events: "getevent",       
             displayEventTime: false,
                  events: SITEURL + "/assign-task"
                 , eventRender: function(event, element, view) {
@@ -236,6 +241,8 @@
                 const task_type = document.getElementById('task_type').value;
                 const task_time = document.getElementById('event_time').value;
                 const task_end_date = document.getElementById('event_end_date').value;
+                const color = document.getElementById('event_color').value;
+                console.log(color)
                 // console.log(user_id , description , task_type , task_time);
                 if (user_id) {
                     var start = $.fullCalendar.formatDate(selectedStart, "Y-MM-DD");
@@ -247,6 +254,7 @@
                             , description: description
                             , task_type : task_type
                             , time : task_time
+                            , color: color
                             , start: start
                             , end: task_end_date
                             , type: 'add'
@@ -258,10 +266,11 @@
 
                             calendar.fullCalendar('renderEvent', {
                                   id: data.id
-                                , title : data.task_description
+                                , title : 'Task :' + data.task_description + '<br>' + 'UserName :' + data.username + '<br>' + 'Time :' + data.task_time 
                                 , start: data.task_date
                                 , end: data.end_date
-                                , allDay: selectedAllDay
+                                , backgroundColor : data.color
+                                // , allDay: selectedAllDay
                             }, true);
 
                             const modal = document.getElementById('defaultModal');
@@ -276,9 +285,10 @@
                     @foreach ($tasks as $task)
                                     calendar.fullCalendar('renderEvent', {
                                         id: '{{ $task->id }}',
-                                        title: 'Task : {{ $task->task_description }}<br> UserName : {{ $task->user->name ?? '' }}<br> Task Time : {{ $task->task_time }}', // Use <br> to create a line break
+                                        title: 'Task : {{ $task->task_description }} <br> UserName : {{ $task->userNames ?? '' }} <br> Task Time : {{ $task->task_time }}', // Use <br> to create a line break
                                         start: '{{ $task->task_date . ' ' . $task->task_time }}',
                                         end: '{{ $task->end_date  . ' 11:59:59'}}',
+                                        backgroundColor: '{{ $task->color }}'
                                         // Other event properties...
                                     }, true);
                     @endforeach
