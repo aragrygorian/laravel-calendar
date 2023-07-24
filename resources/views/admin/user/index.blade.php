@@ -29,6 +29,7 @@
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Phone</th>
+                                        <th>Role</th>
                                         <th>Image</th>
                                         <th>Actions</th>
                                     </tr>
@@ -40,6 +41,7 @@
                                         <td>{{ $user->name ?? '' }}</td> 
                                         <td>{{ $user->email ?? '' }}</td>
                                         <td>{{ $user->phone ?? '' }}</td>
+                                        <td>{{ ucfirst($user->roles()->first()?->name) }}</td>
                                         <td><img src="{{ asset('storage/'.$user->image) }}" width="100" height="100" class="rounded"></td>
                                         <td>
                                            <ul class="nav">

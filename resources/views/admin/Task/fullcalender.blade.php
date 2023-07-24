@@ -96,6 +96,71 @@
         </div>
     </div>
 
+    <!-- The Edit modal -->
+    @foreach ($tasks as $task)
+        <x-primary-button
+            id="editModalBtn{{ $task->id }}"
+            class="hidden"
+            x-data=""
+            x-on:click.prevent="$dispatch('open-modal', 'editModal{{ $task->id }}')"
+        ></x-primary-button>
+
+        <x-modal name="editModal{{ $task->id }}" focusable>
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h1 class="text-lg font-medium text-gray-900">
+                        Edit Task
+                    </h1>
+                    <x-danger-button type="button" onclick="deleteTask({{ $task->id }})">Delete</x-danger-button>
+                </div>
+                <div class="space-y-6">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label>Users</label>
+                            <select class="block w-full js-example-basic-single" multiple name="user_id[]">
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}" {{ $task->users->contains($user)? 'selected': '' }}>{{ $user->name ?? '' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-12 mb-3">
+                            <label for="inputPassword4" class="form-label">Task Description</label>
+                            <textarea class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_description" name="description" >{{ $task->task_description }}</textarea>
+                        </div>
+                
+                    <div class="col-md-12 mb-3">
+                        <label for="inputEmail4" class="form-label">Task Type</label>
+                        <select name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type">
+                            <option value="">Select Task Type</option>
+                            <option value="0" {{ $task->task_type == "0"? 'selected': '' }}>Daily</option>
+                            <option value="1" {{ $task->task_type == "1"? 'selected': '' }}>Weekly</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label for="inputCity" class="form-label">Task Time</label>
+                        <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_time" name="time" value="{{ $task->task_time }}">
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label for="inputCity" class="form-label">Task End Date</label>
+                        <input type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_date" name="end_date" value="{{ $task->end_date }}">
+                    </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end">
+                        <x-secondary-button x-on:click="$dispatch('close')" id="closeEditBtn{{ $task->id }}">
+                            {{ __('Cancel') }}
+                        </x-secondary-button>
+
+                        <x-primary-button type="button" class="ml-3" onclick="submitForm()">
+                            Submit
+                        </x-primary-button>
+                    </div>
+                </div>
+            </div>
+        </x-modal>
+    @endforeach
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
         $(document).ready(function() {
@@ -107,15 +172,16 @@
         });
 </script>
     <script type="text/javascript">
+        /*------------------------------------------
+        --------------------------------------------
+        Get Site URL
+        --------------------------------------------
+        --------------------------------------------*/
+        var SITEURL = "{{ url('/') }}";
+
+        var calendar = null;
+
         $(document).ready(function() {
-            
-            
-            /*------------------------------------------
-            --------------------------------------------
-            Get Site URL
-            --------------------------------------------
-            --------------------------------------------*/
-            var SITEURL = "{{ url('/') }}";
 
             /*------------------------------------------
             --------------------------------------------
@@ -133,7 +199,7 @@
             FullCalender JS Code
             --------------------------------------------
             --------------------------------------------*/
-            var calendar = $('#calendar').fullCalendar({
+            calendar = $('#calendar').fullCalendar({
                 header: {
                 left: 'prev,next today',
                 center: 'title',
@@ -184,21 +250,7 @@
                     },
           
                 eventClick: function (event) {
-                        var deleteMsg = confirm("Do you really want to delete?");
-                        if (deleteMsg) {
-                            $.ajax({
-                                type: "POST",
-                                url: SITEURL + '/fullcalenderAjax',
-                                data: {
-                                        id: event.id,
-                                        type: 'delete'
-                                },
-                                success: function (response) {
-                                    calendar.fullCalendar('removeEvents', event.id);
-                                    displayMessage("Event Deleted Successfully");
-                                }
-                            });
-                        }
+                        $('#editModalBtn' + event.id).click();
                     }
                 });
             // Function to open the custom modal
@@ -259,8 +311,8 @@
                             calendar.fullCalendar('renderEvent', {
                                   id: data.id
                                 , title : data.task_description
-                                , start: data.task_date
-                                , end: data.end_date
+                                , start: data.task_date + ' ' + data.task_time
+                                , end: data.end_date + ' 11:59:59'
                                 , allDay: selectedAllDay
                             }, true);
 
@@ -284,6 +336,27 @@
                     @endforeach
 
         });
+
+        function deleteTask(id) {
+            var deleteMsg = confirm("Do you really want to delete?");
+            if (deleteMsg) {
+                $.ajax({
+                    type: "POST",
+                    url: SITEURL + '/fullcalenderAjax',
+                    data: {
+                            id: id,
+                            type: 'delete'
+                    },
+                    success: function (response) {
+                        calendar.fullCalendar('removeEvents', id);
+                        console.log($('#editModal' + id));
+                        console.log($('#editModalBtn' + id));
+                        $('#closeEditBtn' + id).click();
+                        displayMessage("Event Deleted Successfully");
+                    }
+                });
+            }
+        }
 
         /*------------------------------------------
         --------------------------------------------
