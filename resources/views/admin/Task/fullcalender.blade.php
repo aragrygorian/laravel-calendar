@@ -140,6 +140,7 @@
                             <option value="">Select Task Type</option>
                             <option value="0" {{ $task->task_type == "0"? 'selected': '' }}>Daily</option>
                             <option value="1" {{ $task->task_type == "1"? 'selected': '' }}>Weekly</option>
+                            <option value="1" {{ $task->task_type == "2"? 'selected': '' }}>Monthly</option>
                         </select>
                     </div>
                     <div class="col-md-12 mb-3">
@@ -236,6 +237,19 @@
                 eventDrop: function (event, delta) {
                         var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
                         var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
+                        const user_id = $('.js-example-basic-single').find(':selected');
+                        // console.log(user_id[0]);
+                        let users = [];
+                        for(let i = 0; i < user_id.length; i++){
+                            users[i] = user_id[i].value;
+                        }
+                        
+                        const description = document.getElementById('event_description').value;
+                        const task_type = document.getElementById('task_type').value;
+                        const task_time = document.getElementById('event_time').value;
+                        const task_end_date = document.getElementById('event_end_date').value;
+                        const color = document.getElementById('event_color').value;
+                        
                         // console.log(event)
   
                         $.ajax({
@@ -262,7 +276,7 @@
             function openModal(start, end, allDay) {
                 const modal = document.getElementById('defaultModal');
                 modal.classList.remove('hidden');
-                selectedStart = start;
+                selectedStart = start;    
                 selectedEnd = end;
                 selectedAllDay = allDay;
             }
