@@ -19,7 +19,7 @@ class TaskController extends Controller
      */
     public function calendar(Request $request)
     {
-  
+
         if($request->ajax()) {
        
              $data = Task::whereDate('task_date', '>=', $request->start)
