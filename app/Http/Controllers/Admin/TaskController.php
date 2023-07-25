@@ -30,10 +30,8 @@ class TaskController extends Controller
         }
         $users = User::all();
         $tasks = Task::with('user')->get();
-        foreach($tasks as $task ){
-            $userNames = $task->users->pluck('name')->toArray();
-        }
-        return view('admin.Task.fullcalender' , compact('users' , 'tasks' , 'userNames'));
+        
+        return view('admin.Task.fullcalender' , compact('users' , 'tasks'));
     }
  
     /**
@@ -64,8 +62,8 @@ class TaskController extends Controller
                   'color' => $request->color,
                   'task_date' => $request->start,
                   'end_date' => $end_date,
-                  'task_time' => $request->time,
-                  'end_time' => $request->time_option === 'time'? $request->end_time: null,
+                  'task_time' => $request->time_option === 'time'? $request->time: null,
+                  'end_time' => $request->time_option === 'time'? $request->task_end_time: null,
                   'duration' => $request->time_option !== 'time'? $request->time_duration: null,
                   'duration_unit' => $request->time_option !== 'time'? $request->time_duration_unit: null,
               ]);
