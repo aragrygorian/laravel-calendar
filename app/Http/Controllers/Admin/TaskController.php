@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use \Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use DateTime;
 use Illuminate\Support\Facades\Blade;
@@ -20,17 +20,16 @@ class TaskController extends Controller
      */
     public function calendar(Request $request)
     {
-  
+
         if($request->ajax()) {
        
              $data = Task::whereDate('task_date', '>=', $request->start)
                        ->whereDate('end_date',   '<=', $request->end)
-                       ->get(['id','task_description', 'task_date', 'end_date']);
+                       ->get();
 
         }
         $users = User::all();
-        $tasks = Task::with('user')->get();
-        
+        $tasks = Task::calendarData();
         return view('admin.Task.fullcalender' , compact('users' , 'tasks'));
     }
  
@@ -133,19 +132,42 @@ class TaskController extends Controller
               blade;
 
               $modalHTML = htmlspecialchars(Blade::render($modalHTML, ['task' => $event, 'users' => $users]), ENT_QUOTES, 'UTF-8', false);
- 
+
               return response()->json(['event' => $event, 'modalHTML' => $modalHTML]);
+              
              break;
   
            case 'update':
          
-              $event = Task::find($request->id)->update([
-                  'task_description' => $request->description,
-                  'task_date' => $request->task_date,
-                  'end_date' => $request->end_date,
+            // dd($request->users);
+             // Get end date
+             $end_date = null;
+             if ($request->date_option === 'duration') {
+               $endDateObj = DateTime::createFromFormat('Y-m-d H:i:s', $request->start . ' 00:00:00');
+               $endDateObj->modify("+{$request->date_duration} {$request->date_duration_unit}");
+               $end_date = $endDateObj->format('Y-m-d');
+             } else {
+               $end_date = $request->end;
+             }
+             
+              $event = Task::find($request->id);
+              $event->update([
+                'task_description' => $request->description,
+                'task_type' => $request->task_type,
+                'color' => $request->color,
+                'task_date' => $request->start,
+                'end_date' => $end_date,
+                'task_time' => $request->time_option === 'time'? $request->time: null,
+                'end_time' => $request->time_option === 'time'? $request->task_end_time: null,
+                'duration' => $request->time_option !== 'time'? $request->time_duration: null,
+                'duration_unit' => $request->time_option !== 'time'? $request->time_duration_unit: null,
               ]);
- 
-              return response()->json($event);
+
+              $event->users()->sync($request->users);
+              $users = User::all();
+
+              return response()->json(['event' => $event, 'users' => $users]);
+
              break;
   
            case 'delete':
@@ -157,7 +179,7 @@ class TaskController extends Controller
            default:
              # code...
              break;
-        }
+        }   
     }
 
     public function getTask(){
