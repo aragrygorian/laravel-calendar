@@ -48,7 +48,8 @@
             </div>
             <div class="space-y-6">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 mb-3">
+                        <label>Users</label>
                         <select id="userEvent" class="block w-full js-example-basic-single" multiple name="user_id[]">
                             @foreach($users as $user)
                             <option value="{{ $user->id }}">{{ $user->name ?? '' }}</option>
@@ -56,12 +57,12 @@
                         </select>
                     </div>
 
-                    <div class="col-md-12">
+                    <div class="col-md-12 mb-3">
                         <label for="inputPassword4" class="form-label">Task Description</label>
                         <textarea class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_description" name="description"> </textarea>
                     </div>
 
-                    <div class="col-md-12">
+                    <div class="col-md-12 mb-3">
                         <label for="inputEmail4" class="form-label">Task Type</label>
                         <select name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type">
                             <option value="">Select Task Type</option>
@@ -70,15 +71,62 @@
                             <option value="2">Monthly</option>
                         </select>
                     </div>
-                    <div class="col-md-12">
-                        <label for="inputCity" class="form-label">Task Time</label>
-                        <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_time" name="time">
+
+                    <div class="col-md-12 mb-3" x-data="{option: 'end_date', s: ''}">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="inputCity" class="form-label" x-text="option === 'end_date'? 'End Date': 'Duration'">End Date</label>
+                                <input x-show="option === 'end_date'" type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_date" name="end_date">
+                                <div class="flex items-center gap-2">
+                                    <input x-show="option !== 'end_date'" x-on:input="s = $event.target.value > 1? 's': ''" type="number" id="date_duration" name="date_duration" placeholder="Duration" class="grow border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                    <select x-show="option !== 'end_date'" id="date_duration_unit" name="date_duration_unit" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                        <option value="day" x-text="'day' + s"></option>
+                                        <option value="week" x-text="'week' + s"></option>
+                                        <option value="month" x-text="'month' + s"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="block form-label" x-text="option === 'end_date'? 'Change to Duration': 'Change to End Date'">Option</label>
+                                <select x-on:change="option = $event.target.value" id="date_option" name="date_option" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-2.5 block w-full">
+                                    <option value="end_date">End Date</option>
+                                    <option value="duration">Duration</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-12">
-                        <label for="inputCity" class="form-label">Task End Date</label>
-                        <input type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_date" name="end_date">
+
+                    <div class="col-md-12 mb-3" x-data="{option: 'time', s: ''}">
+                        <div class="row">
+                            <div x-show="option === 'time'" class="col-md-4">
+                                <label for="inputCity" class="form-label">Start Time</label>
+                                <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_time" name="time">
+                            </div>
+                            <div x-show="option === 'time'" class="col-md-4">
+                                <label for="inputCity" class="form-label">End Time</label>
+                                <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_time" name="end_time">
+                            </div>
+                            <div x-show="option !== 'time'" class="col-md-8">
+                                <label for="inputCity" class="form-label">Time Duration</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" x-on:input="s = $event.target.value > 1? 's': ''" name="time_duration" id="time_duration" placeholder="Duration" class="grow border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                    <select name="time_duration_unit" id="time_duration_unit" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                        <option value="min" x-text="'minute' + s"></option>
+                                        <option value="hr" x-text="'hour' + s"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="block form-label" x-text="option === 'time'? 'Change to Duration': 'Change to Time'">Option</label>
+                                <select x-on:change="option = $event.target.value" name="time_option" id="time_option" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-2.5 block w-full">
+                                    <option value="time">Time</option>
+                                    <option value="duration">Duration</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-12">
+
+                    <div class="col-md-12 mb-3">
                         <label for="color" class="form-label">Select Color</label>
                         <input type="color" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_color" name="color">
                     </div>
@@ -290,8 +338,15 @@
 
                 const description = document.getElementById('event_description').value;
                 const task_type = document.getElementById('task_type').value;
-                const task_time = document.getElementById('event_time').value;
+                const date_option = document.getElementById('date_option').value;
                 const task_end_date = document.getElementById('event_end_date').value;
+                const date_duration = document.getElementById('date_duration').value;
+                const date_duration_unit = document.getElementById('date_duration_unit').value;
+                const time_option = document.getElementById('time_option').value;
+                const task_time = document.getElementById('event_time').value;
+                const task_end_time = document.getElementById('event_end_time').value;
+                const time_duration = document.getElementById('time_duration').value;
+                const time_duration_unit = document.getElementById('time_duration_unit').value;
                 const color = document.getElementById('event_color').value;
                 console.log(color)
                 // console.log(user_id , description , task_type , task_time);
@@ -304,10 +359,17 @@
                             users: users,
                             description: description,
                             task_type: task_type,
+                            date_option: date_option,
+                            end: task_end_date,
+                            date_duration: date_duration,
+                            date_duration_unit: date_duration_unit,
+                            time_option: time_option,
                             time: task_time,
+                            task_end_time: task_end_time,
+                            time_duration: time_duration,
+                            time_duration_unit: time_duration_unit,
                             color: color,
                             start: start,
-                            end: task_end_date,
                             type: 'add'
                         },
                         type: "POST",

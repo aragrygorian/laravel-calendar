@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use DateTime;
 use Illuminate\Support\Facades\Blade;
 
 class TaskController extends Controller
@@ -46,13 +47,27 @@ class TaskController extends Controller
         switch ($request->type) {
            case 'add':
             //dd($request->user_id);
+
+              // Get end date
+              $end_date = null;
+              if ($request->date_option === 'duration') {
+                $endDateObj = DateTime::createFromFormat('Y-m-d H:i:s', $request->start . ' 00:00:00');
+                $endDateObj->modify("+{$request->date_duration} {$request->date_duration_unit}");
+                $end_date = $endDateObj->format('Y-m-d');
+              } else {
+                $end_date = $request->end;
+              }
+
               $event = Task::create([
                   'task_description' => $request->description,
                   'task_type' => $request->task_type,
-                  'task_time' => $request->time,
                   'color' => $request->color,
                   'task_date' => $request->start,
-                  'end_date' => $request->end,
+                  'end_date' => $end_date,
+                  'task_time' => $request->time,
+                  'end_time' => $request->time_option === 'time'? $request->end_time: null,
+                  'duration' => $request->time_option !== 'time'? $request->time_duration: null,
+                  'duration_unit' => $request->time_option !== 'time'? $request->time_duration_unit: null,
               ]);
 
 
