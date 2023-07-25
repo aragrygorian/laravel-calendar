@@ -147,9 +147,9 @@
 
     <!-- The Edit modal -->
     @foreach ($tasks as $task)
-    <x-primary-button id="editModalBtn{{ $task->id }}" class="hidden" x-data="" x-on:click.prevent="$dispatch('open-modal', 'editModal{{ $task->id }}')"></x-primary-button>
+    <x-primary-button id="editModalBtn{{ $task->id }}{{ $task->end_date }} 23:59:59" class="hidden" x-data="" x-on:click.prevent="$dispatch('open-modal', 'editModal{{ $task->id }}{{ $task->end_date }} 23:59:59')"></x-primary-button>
 
-    <x-modal name="editModal{{ $task->id }}" focusable>
+    <x-modal name="editModal{{ $task->id }}{{ $task->end_date }} 23:59:59" focusable>
         <div class="p-6">
             <div class="flex items-center justify-between mb-4">
                 <h1 class="text-lg font-medium text-gray-900">
@@ -161,7 +161,7 @@
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label>Users</label>
-                        <select class="block w-full js-example-basic-single" multiple name="user_id[]">
+                        <select class="block w-full js-example-basic-single{{ $task->id }}" multiple name="user_id[]">
                             @foreach($users as $user)
                             <option value="{{ $user->id }}" {{ $task->users->contains($user)? 'selected': '' }}>{{ $user->name ?? '' }}</option>
                             @endforeach
@@ -170,40 +170,105 @@
 
                     <div class="col-md-12 mb-3">
                         <label for="inputPassword4" class="form-label">Task Description</label>
-                        <textarea class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_description" name="description">{{ $task->task_description }}</textarea>
+                        <textarea class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_description{{ $task->id }}" name="description" >{{ $task->task_description }}</textarea>
                     </div>
 
                     <div class="col-md-12 mb-3">
                         <label for="inputEmail4" class="form-label">Task Type</label>
-                        <select name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type">
+                        <select name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type{{ $task->id }}">
                             <option value="">Select Task Type</option>
                             <option value="0" {{ $task->task_type == "0"? 'selected': '' }}>Daily</option>
                             <option value="1" {{ $task->task_type == "1"? 'selected': '' }}>Weekly</option>
                             <option value="1" {{ $task->task_type == "2"? 'selected': '' }}>Monthly</option>
                         </select>
                     </div>
-                    <div class="col-md-12 mb-3">
-                        <label for="inputCity" class="form-label">Task Time</label>
-                        <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_time" name="time" value="{{ $task->task_time }}">
+
+                    <div class="col-md-12 mb-3" x-data="{option: 'end_date', s: ''}">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="inputCity" class="form-label" x-text="option === 'end_date'? 'End Date': 'Duration'">End Date</label>
+                                <input x-show="option === 'end_date'" type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_date{{ $task->id }}" name="end_date" value="{{ $task->end_date ?? '' }}">
+                                <div class="flex items-center gap-2">
+                                    <input x-show="option !== 'end_date'" x-on:input="s = $event.target.value > 1? 's': ''" type="number" id="date_duration{{ $task->id }}" name="date_duration" placeholder="Duration" class="grow border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                    <select x-show="option !== 'end_date'" id="date_duration_unit{{ $task->id }}" name="date_duration_unit" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                        <option value="day" x-text="'day' + s"></option>
+                                        <option value="week" x-text="'week' + s"></option>
+                                        <option value="month" x-text="'month' + s"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="block form-label" x-text="option === 'end_date'? 'Change to Duration': 'Change to End Date'">Option</label>
+                                <select x-on:change="option = $event.target.value" id="date_option{{ $task->id }}" name="date_option" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-2.5 block w-full">
+                                    <option value="end_date">End Date</option>
+                                    <option value="duration">Duration</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-3" x-data="{option: '{{ $task->duration !== null ? ('duration') : ('time') }}' , s: ''}">
+                        <div class="row">
+                            <div x-show="option === 'time'" class="col-md-4">
+                                <label for="inputCity" class="form-label">Start Time</label>
+                                <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_time{{ $task->id }}" name="time" value="{{ $task->task_time ?? '' }}">
+                            </div>
+                            <div x-show="option === 'time'" class="col-md-4">
+                                <label for="inputCity" class="form-label">End Time</label>
+                                <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_time{{ $task->id }}" name="end_time" value="{{ $task->end_time ?? '' }}">
+                            </div>
+                            <div x-show="option !== 'time'" class="col-md-8">
+                                <label for="inputCity" class="form-label">Time Duration</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" x-on:input="s = $event.target.value > 1? 's': ''" name="time_duration" id="time_duration{{ $task->id }}" placeholder="Duration" class="grow border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" value="{{ $task->duration ?? '' }}">
+                                    <select name="time_duration_unit" id="time_duration_unit{{ $task->id }}" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                        <option value="{{ $task->duration_unit == 'min' ? 'selected' : '' }}" x-text="'minute' + s"></option>
+                                        <option value="{{ $task->duration_unit == 'hr' ? 'selected' : '' }}" x-text="'hour' + s"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="block form-label" x-text="option === 'time'? 'Change to Duration': 'Change to Time'">Option</label>
+                                <select x-on:change="option = $event.target.value" name="time_option" id="time_option{{ $task->id }}" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-2.5 block w-full">
+                                    <option value="time">Time</option>
+                                    <option value="duration">Duration</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-12 mb-3">
-                        <label for="inputCity" class="form-label">Task End Date</label>
-                        <input type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_date" name="end_date" value="{{ $task->end_date }}">
+                        <label for="color" class="form-label">Select Color</label>
+                        <input type="color" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_color{{ $task->id }}" name="color" value={{$task->color ?? ''}}>
                     </div>
+
+                    <div class="col-md-12 mb-3">
+                        {{-- <label for="color" class="form-label">Select Color</label> --}}
+                        <input type="hidden" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_start_date{{ $task->id }}" name="color" value="{{ $task->task_date ?? '' }}">
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{-- <label for="color" class="form-label">Select Color</label> --}}
+                        <input type="hidden" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_event_id{{ $task->id }}" name="id" value="{{ $task->id ?? '' }}">
+                    </div>
+
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <x-secondary-button x-on:click="$dispatch('close')" id="closeEditBtn{{ $task->id }}">
+                    <x-secondary-button x-on:click="$dispatch('close')" id="closeEditBtn{{ $task->id }}{{ $task->end_date }} 23:59:59">
                         {{ __('Cancel') }}
                     </x-secondary-button>
 
-                    <x-primary-button type="button" class="ml-3" onclick="submitForm()">
+                    <x-primary-button type="button" class="ml-3" onclick="updateForm()" id="updateForm{{ $task->id }}">
                         Submit
                     </x-primary-button>
                 </div>
             </div>
         </div>
     </x-modal>
+    <script>
+        window.addEventListener('load' , function(){
+            initSelect2('.js-example-basic-single{{ $task->id }}');
+        })
+    </script>
     @endforeach
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -280,30 +345,33 @@
                 select: function(start, end, allDay) {
                     openModal(start, end, allDay);
                 },
+            
+            
 
-                eventDrop: function(event, delta) {
-                    var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
-                    var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
-                    // console.log(event)
+                // eventDrop: function(event, delta) {
+                //     var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
+                //     var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
+                //     // console.log(event)
 
-                    $.ajax({
-                        url: SITEURL + '/fullcalenderAjax',
-                        data: {
-                            description: event.title,
-                            task_date: start,
-                            end_date: end,
-                            id: event.id,
-                            type: 'update'
-                        },
-                        type: "POST",
-                        success: function(response) {
-                            displayMessage("Event Updated Successfully");
-                        }
-                    });
-                },
+                //     $.ajax({
+                //         url: SITEURL + '/fullcalenderAjax',
+                //         data: {
+                //             description: event.title,
+                //             task_date: start,
+                //             end_date: end,
+                //             id: event.id,
+                //             type: 'update'
+                //         },
+                //         type: "POST",
+                //         success: function(response) {
+                //             displayMessage("Event Updated Successfully");
+                //         }
+                //     });
+                // },
 
                 eventClick: function(event) {
-                    $('#editModalBtn' + event.id).click();
+                    console.log('#editModalBtn' + event.id + event.end.format('YYYY-MM-DD HH:mm:ss'));
+                    $('#editModalBtn' + event.id + event.end.format('YYYY-MM-DD HH:mm:ss')).click();
                 }
             });
             // Function to open the custom modal
@@ -336,6 +404,7 @@
                     users[i] = user_id[i].value;
                 }
 
+                
                 const description = document.getElementById('event_description').value;
                 const task_type = document.getElementById('task_type').value;
                 const date_option = document.getElementById('date_option').value;
@@ -376,15 +445,71 @@
                         success: function(data) {
                             console.log(data)
                             displayMessage("Event Created Successfully");
+                            location.reload();
+                       
+                            const modal = document.getElementById('defaultModalCloseBtn').click();
+                            // modal.classList.add('hidden');
+                            // $('#closeModal').close();
+                            calendar.fullCalendar('unselect');
+                            $(document.body).append($(decodeHtml(data.modalHTML)));
+                            
+                            initSelect2('#select2' + data.event.id);
+                        }
+                    });
+                }
+            });
 
-                            calendar.fullCalendar('renderEvent', {
-                                id: data.event.id,
-                                title: 'Task :' + data.event.task_description + '<br>' + 'UserName :' + data.event.username + '<br>' + 'Time :' + data.event.task_time,
-                                start: data.event.task_date + ' ' + data.event.task_time,
-                                end: data.event.end_date + ' 11:59:59',
-                                backgroundColor: data.event.color
-                                // , allDay: selectedAllDay
-                            }, true);
+            $('#updateForm{{ $task->id ?? '' }}').click(function (){
+                const user_id = $('.js-example-basic-single{{ $task->id ?? '' }}').find(':selected');
+                // console.log(user_id[0]);
+                let users = [];
+                for (let i = 0; i < user_id.length; i++) {
+                    users[i] = user_id[i].value;
+                }
+                
+                const id = document.getElementById('task_event_id{{ $task->id ?? '' }}').value;
+                const start = document.getElementById('task_start_date{{ $task->id ?? '' }}').value;
+                const description = document.getElementById('event_description{{ $task->id ?? '' }}').value;
+                const task_type = document.getElementById('task_type{{ $task->id ?? '' }}').value;
+                const date_option = document.getElementById('date_option{{ $task->id ?? '' }}').value;
+                const task_end_date = document.getElementById('event_end_date{{ $task->id ?? '' }}').value;
+                const date_duration = document.getElementById('date_duration{{ $task->id ?? '' }}').value;
+                const date_duration_unit = document.getElementById('date_duration_unit{{ $task->id ?? '' }}').value;
+                const time_option = document.getElementById('time_option{{ $task->id ?? '' }}').value;
+                const task_time = document.getElementById('event_time{{ $task->id ?? '' }}').value;
+                const task_end_time = document.getElementById('event_end_time{{ $task->id ?? '' }}').value;
+                const time_duration = document.getElementById('time_duration{{ $task->id ?? '' }}').value;
+                const time_duration_unit = document.getElementById('time_duration_unit{{ $task->id ?? '' }}').value;
+                const color = document.getElementById('event_color{{ $task->id ?? '' }}').value;
+
+                console.log( id , start , users , description , task_type  , date_option , task_end_date , date_duration , time_option , task_time , task_end_time , time_duration  , time_duration_unit , color);
+
+                // console.log(user_id , description , task_type , task_time);
+                if (user_id) {
+                    $.ajax({
+                        url: SITEURL + "/fullcalenderAjax",
+                        data: {
+                            users: users,
+                            description: description,
+                            task_type: task_type,
+                            date_option: date_option,
+                            end: task_end_date,
+                            date_duration: date_duration,
+                            date_duration_unit: date_duration_unit,
+                            time_option: time_option,
+                            time: task_time,
+                            task_end_time: task_end_time,
+                            time_duration: time_duration,
+                            time_duration_unit: time_duration_unit,
+                            color: color,
+                            start: start,
+                            id: id,
+                            type: 'update'
+                        },
+                        type: "POST",
+                        success: function(response) {
+                            console.log(response)
+                            displayMessage("Event Updated Successfully");
 
                             const modal = document.getElementById('defaultModalCloseBtn').click();
                             // modal.classList.add('hidden');
@@ -396,17 +521,19 @@
                         }
                     });
                 }
-            })
+                });
 
             @foreach($tasks as $task)
-            calendar.fullCalendar('renderEvent', {
-                id: '{{ $task->id }}',
-                title: 'Task : {{ $task->task_description }} <br> Task Time : {{ $task->task_time }}', // Use <br> to create a line break
-                start: '{{ $task->task_date . " " . $task->task_time }}',
-                end: '{{ $task->end_date  . " 11: 59: 59"}}',
-                backgroundColor: '{{ $task->color }}'
-                // Other event properties...
-            }, true);
+            
+                            calendar.fullCalendar('renderEvent', {
+                                id: '{{ $task->id }}',
+                                title: 'Task : {{ $task->task_description }} <br> Task Time : {{ $task->task_time }}',
+                                start: '{{ $task->task_date. " " . $task->task_time }}',
+                                end: '{{ $task->end_date. " 23:59:59" }}', // Set end time to 23:59:59 of the same day
+                                backgroundColor: '{{ $task->color }}',
+                                time: '{{ $task->task_time }}'
+                                // Other event properties...
+                            }, true)
             @endforeach
 
         });
