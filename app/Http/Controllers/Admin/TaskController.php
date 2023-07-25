@@ -135,7 +135,7 @@ class TaskController extends Controller
               blade;
 
               $modalHTML = htmlspecialchars(Blade::render($modalHTML, ['task' => $event, 'users' => $users]), ENT_QUOTES, 'UTF-8', false);
- 
+              
               return response()->json(['event' => $event, 'modalHTML' => $modalHTML]);
              break;
   
