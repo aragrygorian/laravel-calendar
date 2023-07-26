@@ -101,8 +101,11 @@ public static function splitTask($task)
             $eventData = self::createEventData($task, $current_date);
             $events[] = $eventData;
         }
+    } elseif ($task_type == 3){
+        // For Day task 
+       $eventData = self::createEventData($task , $start_date);
+       $events[] = $eventData;       
     }
-
     return $events;
 }
 

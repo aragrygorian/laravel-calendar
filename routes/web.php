@@ -43,8 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/change-logo' , [SettingController::class , 'change_logo'])->name('change-logo');
     Route::get('assign-task' ,[TaskController::class , 'calendar'])->name('assign-task');
     Route::post('fullcalenderAjax' ,[TaskController::class , 'ajax']);
-
-    
+    Route::post('/assign-task-user' , [TaskController::class , 'assign_task_user'])->name('assign-task-user');
 });
 
 

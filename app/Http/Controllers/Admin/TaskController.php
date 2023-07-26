@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use \Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use App\Models\UserTask;
 use DateTime;
 use Illuminate\Support\Facades\Blade;
 
@@ -30,7 +31,13 @@ class TaskController extends Controller
         }
         $users = User::all();
         $tasks = Task::calendarData();
-        return view('admin.Task.fullcalender' , compact('users' , 'tasks'));
+        $engagedTask = Task::where(function ($query) {
+            $query->where('task_type', 4)
+                  ->orWhere('task_type', 5);
+        })
+        ->where('engaged', 0)
+        ->get();
+        return view('admin.Task.fullcalender' , compact('users' , 'tasks' , 'engagedTask'));
     }
  
     /**
@@ -43,7 +50,7 @@ class TaskController extends Controller
  
         switch ($request->type) {
            case 'add':
-            //dd($request->user_id);
+            // dd($request->all());
 
               // Get end date
               $end_date = null;
@@ -60,7 +67,7 @@ class TaskController extends Controller
                   'task_type' => $request->task_type,
                   'color' => $request->color,
                   'task_date' => $request->start,
-                  'end_date' => $end_date,
+                  'end_date' => $request->task_type === "3"? $request->start : $request->end,
                   'task_time' => $request->time_option === 'time'? $request->time: null,
                   'end_time' => $request->time_option === 'time'? $request->task_end_time: null,
                   'duration' => $request->time_option !== 'time'? $request->time_duration: null,
@@ -172,6 +179,7 @@ class TaskController extends Controller
   
            case 'delete':
               $event = Task::find($request->id)->delete();
+              $tasks = UserTask::find($request->id)->delete();
   
               return response()->json($event);
              break;
@@ -214,29 +222,28 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required',
             'task_type' => 'required',
             'description' => 'required',
-            'time' => 'required',
-            'date' => 'required'
+            'start_time' => 'required',
+            'start_date' => 'required'
         ]);
 
-        // Check if there existing task at same date and time 
-        $existingTask = Task::where('user_id' ,$request->user_id)
-        ->whereDate('task_date' , $request->date)
-        ->whereTime('task_time' , $request->time)
-        ->first();
+        // // Check if there existing task at same date and time 
+        // $existingTask = Task::where('user_id' ,$request->user_id)
+        // ->whereDate('task_date' , $request->date)
+        // ->whereTime('task_time' , $request->time)
+        // ->first();
 
-        if($existingTask){
-            return  redirect()->back()->withErrors(['error' => 'Task already assign.']);
-        }
+        // if($existingTask){
+        //     return  redirect()->back()->withErrors(['error' => 'Task already assign.']);
+        // }
 
         $task = new Task();
-        $task->user_id = $request->user_id;
         $task->task_type = $request->task_type;
         $task->task_description = $request->description;
-        $task->task_time = $request->time;
-        $task->task_date = $request->date;
+        $task->task_time = $request->start_time;
+        $task->end_time = $request->end_time;
+        $task->task_date = $request->start_date;
         $task->end_date = $request->end_date;
         if($task->save()){
             return redirect()->route('task.index')->with('success' , 'Task Added Successfully.');
@@ -293,6 +300,17 @@ class TaskController extends Controller
             return redirect()->route('task.index')->with('success' , 'Task Deleted Successfully.');
         }else{
             return redirect()->route('task.index')->with('error' , 'Failed to  Deleted Task.');
+        }
+    }
+
+    public function assign_task_user(Request $request){
+    
+        $task = Task::find($request->id);
+        $task->engaged = 1;
+        $task->users()->sync($request->user_id);
+
+        if($task->update()){
+            return back();
         }
     }
 

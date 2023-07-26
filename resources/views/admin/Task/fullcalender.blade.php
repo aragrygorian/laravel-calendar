@@ -10,7 +10,7 @@
             width: 100% !important;
         }
     </style>
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
         <nav x-data="{ open: false }" class="border-b border-gray-100 mb-3">
             <!-- Primary Navigation Menu -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,12 +30,98 @@
                             @endrole
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </nav>
-        <div id='calendar'></div>
+        
+        <div class="row">
+            <div class="col-md-7">
+                <div id='calendar'></div>
+            </div>
+            <div class="col-md-5">
+
+                <div class="card">
+                    <h5 class="card-header">Week & Month Task</h5>
+                    <div class="table-responsive">
+                        <table class="table ">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Type</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+                                @foreach($engagedTask as $task)
+                                 <tr>
+                                     <td>{{ $loop->iteration }}</td>
+
+                                    <td>
+                                        @if($task->task_type == 4)
+                                           Week
+                                        @else
+                                           Month
+                                        @endif
+                                    </td> 
+                                    <td>{{ $task->task_time ?? '' }}</td>
+                                    <td>{{ $task->end_time ?? '' }}</td>
+                                    <td>{{ $task->task_date ?? '' }}</td>
+                                    <td>{{ $task->end_date ?? '' }}</td>
+                                    <td>
+                                       <ul class="nav">
+                                              <li class="nav-item">
+                                                   <x-primary-button id="AssignTask"  x-data="" x-on:click.prevent="$dispatch('open-modal', 'AssignTask')">Assign Task</x-primary-button>
+                                              </li>
+                                              <x-modal name="AssignTask">
+                                                <div class="p-6">
+                                                    <div class="flex items-center justify-between mb-4">
+                                                        <h1 class="text-lg font-medium text-gray-900">
+                                                            Add Task
+                                                        </h1>
+                                                    </div>
+                                                    <div class="space-y-6">
+                                                        <form method="POST" action="{{ route('assign-task-user') }}">
+                                                            @csrf
+                                                        <div class="row">
+                                                            <div class="col-md-12 mb-3">
+                                                                <label>Users</label>
+                                                                <select id="userEvent" class="block w-full js-example-basic-single" multiple name="user_id[]">
+                                                                    @foreach($users as $user)
+                                                                    <option value="{{ $user->id }}">{{ $user->name ?? '' }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                                <input type="hidden" value="{{ $task->id }}" name="id"/>
+                                                            </div>
+                                                        </div>
+                                        
+                                                        <div class="mt-6 flex justify-end">
+                                                            <x-secondary-button x-on:click="$dispatch('close')" id="defaultModalCloseBtn">
+                                                                {{ __('Cancel') }}
+                                                            </x-secondary-button>
+                                        
+                                                            <x-primary-button type="submit" class="ml-3">
+                                                                Submit
+                                                            </x-primary-button>
+                                                        </div>
+                                                    </form>
+                                                    </div>
+                                                </div>
+                                            </x-modal>
+                                            </ul>
+                                      </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
     
     <x-primary-button id="defaultModalBtn" class="hidden" x-data="" x-on:click.prevent="$dispatch('open-modal', 'defaultModal')"></x-primary-button>
@@ -62,17 +148,18 @@
                         <textarea class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_description" name="description"> </textarea>
                     </div>
 
-                    <div class="col-md-12 mb-3">
+                    {{-- <div class="col-md-12 mb-3" x-data="{ selectedOption: '' , option: 'end_date', s: ''}">
                         <label for="inputEmail4" class="form-label">Task Type</label>
-                        <select name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type">
+                        <select x-model="selectedOption" name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type">
                             <option value="">Select Task Type</option>
                             <option value="0">Daily</option>
                             <option value="1">Weekly</option>
                             <option value="2">Monthly</option>
+                            <option value="3">Day</option>
                         </select>
                     </div>
 
-                    <div class="col-md-12 mb-3" x-data="{option: 'end_date', s: ''}">
+                    <div class="col-md-12 mb-3"  x-show="selectedOption !== '3'">
                         <div class="row">
                             <div class="col-md-8">
                                 <label for="inputCity" class="form-label" x-text="option === 'end_date'? 'End Date': 'Duration'">End Date</label>
@@ -94,8 +181,45 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
+
+                    <div x-data="{ selectedOption: '', option: 'end_date', s: '' }">
+                        <label for="inputEmail4" class="form-label">Task Type</label>
+                        <select x-model="selectedOption" name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type">
+                            <option value="">Select Task Type</option>
+                            <option value="0">Daily</option>
+                            <option value="1">Weekly</option>
+                            <option value="2">Monthly</option>
+                            <option value="3">Day</option>
+                        </select>
+                    
+                        <div class="col-md-12 mb-3" x-show="selectedOption !== '3'">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label for="inputCity" class="form-label" x-text="option === 'end_date' ? 'End Date' : 'Duration'">End Date</label>
+                                    <input x-show="option === 'end_date'" type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_date" name="end_date">
+                                    <div class="flex items-center gap-2">
+                                        <input x-show="option !== 'end_date'" x-on:input="s = $event.target.value > 1 ? 's' : ''" type="number" id="date_duration" name="date_duration" placeholder="Duration" class="grow border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                        <select x-show="option !== 'end_date'" id="date_duration_unit" name="date_duration_unit" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                            <option value="day" x-text="'day' + s"></option>
+                                            <option value="week" x-text="'week' + s"></option>
+                                            <option value="month" x-text="'month' + s"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="block form-label" x-text="option === 'end_date' ? 'Change to Duration' : 'Change to End Date'">Option</label>
+                                    <select x-on:change="option = $event.target.value" id="date_option" name="date_option" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-2.5 block w-full">
+                                        <option value="end_date">End Date</option>
+                                        <option value="duration">Duration</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                 
                     <div class="col-md-12 mb-3" x-data="{option: 'time', s: ''}">
                         <div class="row">
                             <div x-show="option === 'time'" class="col-md-4">
@@ -180,6 +304,7 @@
                             <option value="0" {{ $task->task_type == "0"? 'selected': '' }}>Daily</option>
                             <option value="1" {{ $task->task_type == "1"? 'selected': '' }}>Weekly</option>
                             <option value="1" {{ $task->task_type == "2"? 'selected': '' }}>Monthly</option>
+                            <option value="1" {{ $task->task_type == "3"? 'selected': '' }}>Day</option>
                         </select>
                     </div>
 

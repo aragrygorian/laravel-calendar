@@ -21,21 +21,11 @@
                     <form class="row g-3" method="POST" action="{{ route('task.store') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="col-md-6">
-                            <label for="inputEmail4" class="form-label">Name</label>
-                            <select name="user_id" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
-                                <option value="">Select user</option>
-                                @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name ?? '' }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
                             <label for="inputEmail4" class="form-label">Task Type</label>
                             <select name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type">
                                 <option value="">Select Task Type</option>
-                                <option value="0">Daily</option>
-                                <option value="1">Weekly</option>
+                                <option value="4">Week</option>
+                                <option value="5">Month</option>
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -43,16 +33,20 @@
                             <textarea class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="inputPassword4" name="description" > </textarea>
                         </div>
                         <div class="col-md-6">
-                            <label for="inputCity" class="form-label">Task Time</label>
-                            <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="inputCity" name="time">
+                            <label for="inputCity" class="form-label">Start Date</label>
+                            <input type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="inputCity" name="start_date">
+                        </div>
+                        <div class="col-md-6" id="due-date-field">
+                            <label for="inputCity" class="form-label">End Date</label>
+                            <input type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="inputCity" name="end_date">
                         </div>
                         <div class="col-md-6">
-                            <label for="inputCity" class="form-label">Task Date</label>
-                            <input type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="inputCity" name="date">
+                            <label for="inputCity" class="form-label">Start Time</label>
+                            <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="inputCity" name="start_time">
                         </div>
-                        <div class="col-md-6" style="display:none" id="due-date-field">
-                            <label for="inputCity" class="form-label">Due Date</label>
-                            <input type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="inputCity" name="end_date">
+                        <div class="col-md-6">
+                            <label for="inputCity" class="form-label">End Time</label>
+                            <input type="time" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="inputCity" name="end_time">
                         </div>
                         <div class="col-12">
                             <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
@@ -67,24 +61,5 @@
     </div>
 </div>
 
-<script>
-$(document).ready(function(){
-    function toggleDueDateField(){
-        const selectedValue = $('#task_type').val();
-       console.log(selectedValue)
-        if(selectedValue == "1"){
-            $('#due-date-field').show();
-        }else{
-            $('#due-date-field').hide();
-        }
-    }
-    toggleDueDateField();
-    $('#task_type').on('change' , function(){
-        toggleDueDateField();
-    })
-    
-})
-
-</script>
 
 </x-app-layout>
