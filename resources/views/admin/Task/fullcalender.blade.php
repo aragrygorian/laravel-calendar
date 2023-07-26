@@ -148,41 +148,6 @@
                         <textarea class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_description" name="description"> </textarea>
                     </div>
 
-                    {{-- <div class="col-md-12 mb-3" x-data="{ selectedOption: '' , option: 'end_date', s: ''}">
-                        <label for="inputEmail4" class="form-label">Task Type</label>
-                        <select x-model="selectedOption" name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type">
-                            <option value="">Select Task Type</option>
-                            <option value="0">Daily</option>
-                            <option value="1">Weekly</option>
-                            <option value="2">Monthly</option>
-                            <option value="3">Day</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-12 mb-3"  x-show="selectedOption !== '3'">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <label for="inputCity" class="form-label" x-text="option === 'end_date'? 'End Date': 'Duration'">End Date</label>
-                                <input x-show="option === 'end_date'" type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_date" name="end_date">
-                                <div class="flex items-center gap-2">
-                                    <input x-show="option !== 'end_date'" x-on:input="s = $event.target.value > 1? 's': ''" type="number" id="date_duration" name="date_duration" placeholder="Duration" class="grow border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
-                                    <select x-show="option !== 'end_date'" id="date_duration_unit" name="date_duration_unit" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
-                                        <option value="day" x-text="'day' + s"></option>
-                                        <option value="week" x-text="'week' + s"></option>
-                                        <option value="month" x-text="'month' + s"></option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="block form-label" x-text="option === 'end_date'? 'Change to Duration': 'Change to End Date'">Option</label>
-                                <select x-on:change="option = $event.target.value" id="date_option" name="date_option" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-2.5 block w-full">
-                                    <option value="end_date">End Date</option>
-                                    <option value="duration">Duration</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div> --}}
-
 
                     <div x-data="{ selectedOption: '', option: 'end_date', s: '' }">
                         <label for="inputEmail4" class="form-label">Task Type</label>
@@ -271,9 +236,9 @@
 
     <!-- The Edit modal -->
     @foreach ($tasks as $task)
-    <x-primary-button id="editModalBtn{{ $task->id }}{{ $task->end_date }} 23:59:59" class="hidden" x-data="" x-on:click.prevent="$dispatch('open-modal', 'editModal{{ $task->id }}{{ $task->end_date }} 23:59:59')"></x-primary-button>
+    <x-primary-button id="editModalBtn{{ $task->id }}{{ $task->task_date }} 23:59:59" class="hidden" x-data="" x-on:click.prevent="$dispatch('open-modal', 'editModal{{ $task->id }}{{ $task->task_date }} 23:59:59')"></x-primary-button>
 
-    <x-modal name="editModal{{ $task->id }}{{ $task->end_date }} 23:59:59" focusable>
+    <x-modal name="editModal{{ $task->id }}{{ $task->task_date }} 23:59:59" focusable>
         <div class="p-6">
             <div class="flex items-center justify-between mb-4">
                 <h1 class="text-lg font-medium text-gray-900">
@@ -495,6 +460,7 @@
                 // },
 
                 eventClick: function(event) {
+                    console.log(event);
                     console.log('#editModalBtn' + event.id + event.end.format('YYYY-MM-DD HH:mm:ss'));
                     $('#editModalBtn' + event.id + event.end.format('YYYY-MM-DD HH:mm:ss')).click();
                 }
@@ -701,3 +667,103 @@
     </script>
 
 </x-app-layout>
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    {{-- <div class="col-md-12 mb-3" x-data="{ selectedOption: '' , option: 'end_date', s: ''}">
+                        <label for="inputEmail4" class="form-label">Task Type</label>
+                        <select x-model="selectedOption" name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type">
+                            <option value="">Select Task Type</option>
+                            <option value="0">Daily</option>
+                            <option value="1">Weekly</option>
+                            <option value="2">Monthly</option>
+                            <option value="3">Day</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 mb-3"  x-show="selectedOption !== '3'">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="inputCity" class="form-label" x-text="option === 'end_date'? 'End Date': 'Duration'">End Date</label>
+                                <input x-show="option === 'end_date'" type="date" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="event_end_date" name="end_date">
+                                <div class="flex items-center gap-2">
+                                    <input x-show="option !== 'end_date'" x-on:input="s = $event.target.value > 1? 's': ''" type="number" id="date_duration" name="date_duration" placeholder="Duration" class="grow border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                    <select x-show="option !== 'end_date'" id="date_duration_unit" name="date_duration_unit" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                        <option value="day" x-text="'day' + s"></option>
+                                        <option value="week" x-text="'week' + s"></option>
+                                        <option value="month" x-text="'month' + s"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="block form-label" x-text="option === 'end_date'? 'Change to Duration': 'Change to End Date'">Option</label>
+                                <select x-on:change="option = $event.target.value" id="date_option" name="date_option" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-2.5 block w-full">
+                                    <option value="end_date">End Date</option>
+                                    <option value="duration">Duration</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div> --}}

@@ -31,6 +31,7 @@ class TaskController extends Controller
         }
         $users = User::all();
         $tasks = Task::calendarData();
+    
         $engagedTask = Task::where(function ($query) {
             $query->where('task_type', 4)
                   ->orWhere('task_type', 5);
