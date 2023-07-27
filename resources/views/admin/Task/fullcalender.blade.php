@@ -152,7 +152,7 @@
                         <label for="inputEmail4" class="form-label">Task Type</label>
                         <select x-model="selectedOption" name="task_type" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" id="task_type">
                             <option value="">Select Task Type</option>
-                            <option value="0">Daily</option>
+                            <option value="0">Daily</option>  
                             <option value="1">Weekly</option>
                             <option value="2">Monthly</option>
                             <option value="3">Day</option>
