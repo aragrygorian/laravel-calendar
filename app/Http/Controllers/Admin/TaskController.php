@@ -147,7 +147,8 @@ class TaskController extends Controller
   
            case 'update':
          
-            // dd($request->users);
+
+            dd($request->all());
              // Get end date
              $end_date = null;
              if ($request->date_option === 'duration') {
@@ -179,11 +180,17 @@ class TaskController extends Controller
              break;
   
            case 'delete':
+             dd($request->all());
               $event = Task::find($request->id)->delete();
               $tasks = UserTask::find($request->id)->delete();
   
               return response()->json($event);
              break;
+            
+            case 'findUser':
+                $userTask = Task::with('users')->find($request->id);
+                $users = User::all();
+                return response()->json(['userTask' => $userTask , 'users' => $users]);
              
            default:
              # code...
