@@ -73,6 +73,7 @@ public static function splitTask($task)
     $start_date = $task->task_date;
     $end_date = $task->end_date;
     $task_type = $task->task_type; // Assuming you have a 'task_type' field in your Task model.
+    $engaged = $task->engaged;
 
     $start_date = Carbon::createFromFormat('Y-m-d', $start_date);
     $end_date = Carbon::createFromFormat('Y-m-d', $end_date);
@@ -105,6 +106,12 @@ public static function splitTask($task)
         // For Day task 
        $eventData = self::createEventData($task , $start_date);
        $events[] = $eventData;       
+    }elseif ($task_type == 4 && $engaged == 1){
+        $eventData = self::createEventData($task , $start_date);
+        $events[] = $eventData;
+    }elseif ($task_type == 5 && $engaged == 1){
+        $eventData = self::createEventData($task , $start_date);
+        $events[] = $eventData;
     }
     return $events;
 }
@@ -112,7 +119,7 @@ public static function splitTask($task)
 public static function createEventData($task, $current_date)
 {
     $eventData = json_decode(json_encode($task));
-    $eventData->end_date = $current_date->format('Y-m-d');
+    $eventData->end_date = $task->task_type == 4 || $task->task_type == 5 ? $task->end_date :  $current_date->format('Y-m-d');
     $eventData->task_date = $current_date->format('Y-m-d');
     $eventData->users = collect($eventData->users);
 
