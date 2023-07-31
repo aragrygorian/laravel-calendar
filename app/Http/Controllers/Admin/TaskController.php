@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UserTask;
 use DateTime;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
 {
@@ -51,8 +52,20 @@ class TaskController extends Controller
  
         switch ($request->type) {
            case 'add':
+           
             // dd($request->all());
+            $validator = Validator::make($request->all(), [
+                'users.0' => 'required',
+                'description' => 'required',
+                'task_type' => 'required',
+                'start' => 'nullable|date',
+               ] , [
+                'users.0.required' => 'Please select at least one user..'
+               ]);
 
+               if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+                }
               // Get end date
               $end_date = null;
               if ($request->date_option === 'duration') {
@@ -146,9 +159,7 @@ class TaskController extends Controller
              break;
   
            case 'update':
-         
 
-            dd($request->all());
              // Get end date
              $end_date = null;
              if ($request->date_option === 'duration') {
@@ -180,10 +191,11 @@ class TaskController extends Controller
              break;
   
            case 'delete':
-             dd($request->all());
-              $event = Task::find($request->id)->delete();
-              $tasks = UserTask::find($request->id)->delete();
-  
+              $event = Task::find($request->id);
+              if($event){
+                  $event->users()->detach();
+                  $event->delete();
+              }
               return response()->json($event);
              break;
             
@@ -193,7 +205,7 @@ class TaskController extends Controller
                 return response()->json(['userTask' => $userTask , 'users' => $users]);
              
            default:
-             # code...
+             # code... 
              break;
         }   
     }
