@@ -559,8 +559,12 @@
                                 let user = document.querySelector('#user_error');
                                 let description = document.querySelector('#user_description');
                                 let task_type = document.querySelector('#user_task_type');
-                                // let task_user_date = document.querySelector('#user_date_error');
-                                // task_user_date.textContent = errors.end[0];
+                                let task_user_date = document.querySelector('#user_date_error');
+                                
+                                if(errors.end && errors.end.length > 0){
+
+                                    task_user_date.textContent = errors.end[0];
+                                }
                                 if( errors['users.0'] &&  errors['users.0'].length > 0){
                                     user.textContent = errors['users.0'][0];
                                 }

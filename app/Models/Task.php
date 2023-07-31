@@ -59,7 +59,11 @@ class Task extends Model
 
     public static function calendarData()
 {
-    $tasks = self::with('users')->get();
+    if(auth()->user()->hasRole('admin')){
+        $tasks = self::with('users')->get();
+    }else{
+        $tasks = auth()->user()->tasks()->with('users')->get();
+    }
     $events = [];
     foreach ($tasks as $task) {
         $events = array_merge($events, self::splitTask($task));
