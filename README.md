@@ -6,6 +6,8 @@ The some important steps to install that project are given below
 
 2 => Go to the .env files and give your credentials like db_name db_password etc..
 
+(You also need to have vendor folder uploaded)
+
 3 => go to the borwser and http://your domain/cmd/migrate
 
 4 => go to browser and http://your domain/cmd/storage:link
