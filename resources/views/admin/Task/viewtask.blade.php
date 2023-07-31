@@ -16,14 +16,28 @@
     $(document).ready(function() {
         // page is now ready, initialize the calendar...
         $('#calendar').fullCalendar({
+            header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,basicWeek,basicDay,dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+                    // right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+
+                },
+
+                navLinks: true,
+                editable: true,
+                events: "getevent",
+                displayEventTime: false,
             // put your options and callbacks here
             events : [
                 @foreach($assignTask as $task)
                 {
-                    title : '{{ $task->task_description }}',
-                    start : '{{ $task->task_date }}',
-                    end : '{{$task->end_date}}',
-                    displayEventTime : true,
+                    id: '{{ $task->id }}',
+                                title: 'Task : {{ $task->task_description }}',
+                                start: '{{ $task->task_date. " " . $task->task_time }}',
+                                end: '{{ $task->end_date. " 23:59:59" }}', // Set end time to 23:59:59 of the same day
+                                backgroundColor: '{{ $task->color }}',
+                                time: '{{ $task->task_time }}'
                 },
                 @endforeach
             ]

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use DateTime;
+use \Carbon\Carbon;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Http\Request;
-use \Carbon\Carbon;
-use App\Http\Controllers\Controller;
 use App\Models\UserTask;
-use DateTime;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
 
@@ -173,10 +174,10 @@ class TaskController extends Controller
               $event = Task::find($request->id);
               $event->update([
                 'task_description' => $request->description,
-                'task_type' => $request->task_type,
+                'task_type' => $request->task_type  ,
                 'color' => $request->color,
                 'task_date' => $request->start,
-                'end_date' => $end_date,
+                'end_date' => $request->task_type == '3' ? $request->start : $end_date,
                 'task_time' => $request->time_option === 'time'? $request->time: null,
                 'end_time' => $request->time_option === 'time'? $request->task_end_time: null,
                 'duration' => $request->time_option !== 'time'? $request->time_duration: null,
@@ -212,7 +213,7 @@ class TaskController extends Controller
 
     public function getTask(){
 
-        $assignTask = Task::with('user')->where('user_id' ,auth()->user()->id)->get();
+        $assignTask = Auth::user()->tasks()->with('users')->get();
         return view('admin.Task.viewtask' , compact('assignTask'));
 
     }
@@ -332,7 +333,5 @@ class TaskController extends Controller
         if($task->update()){
             return back();
         }
-    }
-
-    
+    }    
 }

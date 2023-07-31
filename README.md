@@ -1,66 +1,50 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Installation Steps 
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The some important steps to install that project are given below
 
-## About Laravel
+1 => Create Database for example like calendarApp
+2 => Go to the .env files and give your credentials like db_name db_password etc..
+3 => go to the borwser and http://calendar.admksol.com/cmd/migrate
+4 => go to browser and http://calendar.admksol.com/cmd/storage:link
+5 => go to browser and http://calendar.admksol.com/cmd/cache:clear
+6 => go to browser and http://calendar.admksol.com/cmd/db:seed
+7 => and then put the admin credentials  like email => admin@gmail.com and password => 123456
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Project Title
+Business Management Web Application Calendar App
+## Project Description 
+This is calendar app basic web application to manage small business.With the help of this project you can track user record and manage user and also 
+you can able to assign task to users.To make this project attrative. We use Calendar and in that calendar User can see our Daily or Weekly or Monthly or Day or Week or Month task. 
+The main feature of this project is are given below
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+ 1  => User Management Like (Add  , Delete , Update or Show)
+ 2  => Task Management Like (Add task , Delete task , Update task , Show task , Assign Task )
+ 
+ The main key features of that project are given below:
 
-## Learning Laravel
+ 1 => Daily Task should be every day not only one day.
+ 2 => Weekly Task should be displayed every once week.
+ 3 => Monthly Task should be displayed in every once month.
+ 4 => Day Task should be display only that day.
+ 5 => Admin can also select color for specific  task.
+ 6 => Admin have right to assign task multiple user at once.
+ 7 => Admin should assign user roles.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+ ## Sequence to Select End Date or Duration(day  , month , week) of that task 
+ And When we add task we click on calendar then the model should open and there some fileds.When admin click on calendar it can take the start date from here and the 
+ admin should asssign to end_date of that task . And there is also option for Duration suppose you are not selected end date but you want to run that task in 4 month 
+ so there is an option to select duration and set that task.
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Sequence to select start_time end_time or Duration (min , hr )
+Just like start date and end date we have also option for time. User have option to set start time or end time or to select duration of that task we have a dropdown
+there you can select duration and then set the duration for example 30 and select hr, min.
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## aside form calendar 
+To assign task page we have two tab for calendar view and also table view. In that table view admin can set Week or Month task and when that task has to be set
+then that task should be displayed in the Assign_task page.There Week and Month task should be aside from the calendar and there is a button to assign task. When admin click on that 
+then the model appear there admin can select user to assign task once the task assigned. Then it should be displayed into the calendar as well.
