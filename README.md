@@ -3,12 +3,20 @@
 The some important steps to install that project are given below
 
 1 => Create Database for example like calendarApp
+
 2 => Go to the .env files and give your credentials like db_name db_password etc..
-3 => go to the borwser and http://calendar.admksol.com/cmd/migrate
-4 => go to browser and http://calendar.admksol.com/cmd/storage:link
-5 => go to browser and http://calendar.admksol.com/cmd/cache:clear
-6 => go to browser and http://calendar.admksol.com/cmd/db:seed
-7 => and then put the admin credentials  like email => admin@gmail.com and password => 123456
+
+3 => go to the borwser and http://your domain/cmd/migrate
+
+4 => go to browser and http://your domain/cmd/storage:link
+
+5 => go to browser and http://your domain/cmd/cache:clear
+
+6 => go to browser and http://your domain/cmd/db:seed
+
+7 => and then put the admin credentials  
+
+email => admin@gmail.com and password => 123456
 
 
 ## Project Title
