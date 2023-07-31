@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use DateTime;
+use \Carbon\Carbon;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Http\Request;
-use \Carbon\Carbon;
-use App\Http\Controllers\Controller;
 use App\Models\UserTask;
-use DateTime;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
 {
@@ -51,8 +53,20 @@ class TaskController extends Controller
  
         switch ($request->type) {
            case 'add':
+           
             // dd($request->all());
+            $validator = Validator::make($request->all(), [
+                'users.0' => 'required',
+                'description' => 'required',
+                'task_type' => 'required',
+                'start' => 'nullable|date',
+               ] , [
+                'users.0.required' => 'Please select at least one user..'
+               ]);
 
+               if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+                }
               // Get end date
               $end_date = null;
               if ($request->date_option === 'duration') {
@@ -146,8 +160,7 @@ class TaskController extends Controller
              break;
   
            case 'update':
-         
-            // dd($request->users);
+
              // Get end date
              $end_date = null;
              if ($request->date_option === 'duration') {
@@ -161,10 +174,10 @@ class TaskController extends Controller
               $event = Task::find($request->id);
               $event->update([
                 'task_description' => $request->description,
-                'task_type' => $request->task_type,
+                'task_type' => $request->task_type  ,
                 'color' => $request->color,
                 'task_date' => $request->start,
-                'end_date' => $end_date,
+                'end_date' => $request->task_type == '3' ? $request->start : $end_date,
                 'task_time' => $request->time_option === 'time'? $request->time: null,
                 'end_time' => $request->time_option === 'time'? $request->task_end_time: null,
                 'duration' => $request->time_option !== 'time'? $request->time_duration: null,
@@ -179,21 +192,28 @@ class TaskController extends Controller
              break;
   
            case 'delete':
-              $event = Task::find($request->id)->delete();
-              $tasks = UserTask::find($request->id)->delete();
-  
+              $event = Task::find($request->id);
+              if($event){
+                  $event->users()->detach();
+                  $event->delete();
+              }
               return response()->json($event);
              break;
+            
+            case 'findUser':
+                $userTask = Task::with('users')->find($request->id);
+                $users = User::all();
+                return response()->json(['userTask' => $userTask , 'users' => $users]);
              
            default:
-             # code...
+             # code... 
              break;
         }   
     }
 
     public function getTask(){
 
-        $assignTask = Task::with('user')->where('user_id' ,auth()->user()->id)->get();
+        $assignTask = Auth::user()->tasks()->with('users')->get();
         return view('admin.Task.viewtask' , compact('assignTask'));
 
     }
@@ -313,7 +333,5 @@ class TaskController extends Controller
         if($task->update()){
             return back();
         }
-    }
-
-    
+    }    
 }
